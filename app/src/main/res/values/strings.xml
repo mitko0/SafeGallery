@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Safe Gallery</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="tab_audio">Audio</string>
+    <string name="tab_gallery">Gallery</string>
+    <string name="tab_files">Files</string>
+
+    <string name="tab_safe_audio">Safe Audio</string>
+    <string name="tab_safe_gallery">Safe Gallery</string>
+    <string name="tab_safe_files">Safe Files</string>
+</resources>
