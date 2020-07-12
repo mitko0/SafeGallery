@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_hideable="true">
+
+    <TextView
+            android:id="@+id/lock"
+            android:text="Lock"
+            android:drawableTop="@drawable/ic_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"/>
+
+    <TextView
+            android:id="@+id/delete"
+            android:text="Delete"
+            android:drawableTop="@drawable/ic_delete_forever"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"/>
+
+    <TextView
+            android:id="@+id/rename"
+            android:text="Rename"
+            android:drawableTop="@drawable/ic_modify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"/>
+
+    <TextView
+            android:id="@+id/move"
+            android:text="Move"
+            android:drawableTop="@drawable/ic_move"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"/>
+
+    <TextView
+            android:id="@+id/close"
+            android:text="Close"
+            android:drawableTop="@drawable/ic_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"/>
+
+</LinearLayout>

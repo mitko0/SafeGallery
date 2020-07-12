@@ -5,33 +5,49 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="1dp">
+        android:padding="5dp"
+>
 
     <ImageView
-            android:id="@+id/video"
+            android:id="@+id/ivItemImage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1"
             tools:ignore="MissingConstraints"
-            app:srcCompat="@drawable/ic_folder_open_black"
+            android:background="#FFFFFF"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-    <CheckBox
-            android:id="@+id/cbMultiple"
+
+    <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:srcCompat="@drawable/ic_play_circle_filled_black"
+            android:id="@+id/ivVideoIcon"
+            android:background="#FFFFFF"
+            app:layout_constraintTop_toTopOf="@+id/ivItemImage"
+            app:layout_constraintStart_toStartOf="@+id/ivItemImage"/>
+
+    <CheckBox
+            android:id="@+id/cbSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/ivItemImage"
+            app:layout_constraintTop_toTopOf="@+id/ivItemImage"/>
 
     <TextView
             android:id="@+id/tvItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textSize="10sp"
             android:textAlignment="center"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:background="#4D828282"
+            android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/video"/>
+            app:layout_constraintBottom_toBottomOf="@+id/ivItemImage"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

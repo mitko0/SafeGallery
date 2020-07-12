@@ -1,4 +1,4 @@
-package com.example.safegallery.recycler_views.defaultt;
+package com.example.safegallery.recycler_views.def;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.safegallery.R;
-import com.example.safegallery.recycler_views.ClickListener;
+import com.example.safegallery.recycler_views.interfaces.ClickListener;
 import com.example.safegallery.tabs.data.DataPath;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,8 +27,9 @@ import java.util.List;
 public class DefaultAdapter extends RecyclerView.Adapter<DefaultViewHolder> {
 
     private Context context;
-    private List<DataPath> paths;
     private ClickListener clickListener;
+    private List<String> viewDataPaths = new ArrayList<>();
+    private List<DataPath> dataPaths = new ArrayList<>();
 
     @NonNull
     @Override
@@ -39,15 +41,18 @@ public class DefaultAdapter extends RecyclerView.Adapter<DefaultViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DefaultViewHolder holder, int position) {
-        DataPath path = paths.get(position);
-        File fileForPath = new File(path.getPath());
+        String path = this.viewDataPaths.get(position);
+        File fileForPath = new File(path);
 
-        holder.img.setOnClickListener(v -> clickListener.onClick(fileForPath, path.getMimeType()));
+        holder.img.setOnClickListener(v -> clickListener.onClick(fileForPath));
         holder.icon.setVisibility(View.GONE);
         holder.fileName.setVisibility(View.GONE);
-        holder.folderName.setVisibility(View.GONE);
+        holder.folderName.setVisibility(View.VISIBLE);
+        holder.folderName.setText(fileForPath.getName());
 
-        if (fileForPath.isDirectory()) {
+        Glide.with(context).load(R.drawable.ic_folder_open_black).into(holder.img);
+
+        /*if (fileForPath.isDirectory()) {
             Glide.with(context).load(R.drawable.ic_folder_open_black).into(holder.img);
             holder.folderName.setVisibility(View.VISIBLE);
             holder.folderName.setText(fileForPath.getName());
@@ -67,11 +72,11 @@ public class DefaultAdapter extends RecyclerView.Adapter<DefaultViewHolder> {
                     holder.icon.setVisibility(View.VISIBLE);
                 }
             }
-        }
+        }*/
     }
 
     @Override
     public int getItemCount() {
-        return paths.size();
+        return this.viewDataPaths.size();
     }
 }

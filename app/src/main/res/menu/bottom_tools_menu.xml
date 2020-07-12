@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/lock"
+            android:icon="@drawable/ic_lock"
+            android:title="lock"
+            app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/delete"
+            android:icon="@drawable/ic_delete_forever"
+            android:title="delete"
+            app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/rename"
+            android:icon="@drawable/ic_modify"
+            android:title="rename"
+            app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/move"
+            android:icon="@drawable/ic_move"
+            android:title="move"
+            app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/close"
+            android:icon="@drawable/ic_close"
+            android:title="close"
+            app:showAsAction="always"/>
+</menu>

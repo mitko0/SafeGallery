@@ -1,6 +1,6 @@
 package com.example.safegallery.tabs.data;
 
-import android.content.Context;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -26,7 +26,7 @@ public class StorageData {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public static List<DataPath> loadDataPathsForMedia(Context context, DataType type) {
+    public static List<DataPath> loadDataPathsForMedia(ContentResolver contentResolver, DataType type) {
 
         List<DataPath> result = new ArrayList<>();
 
@@ -38,27 +38,27 @@ public class StorageData {
         switch (type) {
             case Audio:
                 uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+                cursor = contentResolver.query(uri, projection, null, null, orderBy + " DESC");
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }
                 break;
             case Gallery:
                 uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+                cursor = contentResolver.query(uri, projection, null, null, orderBy + " DESC");
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }
 
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+                cursor = contentResolver.query(uri, projection, null, null, orderBy + " DESC");
                 if (cursor != null) {
                     result.addAll(getCursorData(cursor));
                 }
                 break;
             /*case Files:
                 uri = MediaStore.Files.getContentUri("external");
-                cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+                cursor = contentResolver.query(uri, projection, null, null, orderBy + " DESC");
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }

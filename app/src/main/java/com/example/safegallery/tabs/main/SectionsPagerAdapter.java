@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.safegallery.tabs.data.DataType;
-import com.example.safegallery.tabs.fragments.BlankFragment;
+import com.example.safegallery.tabs.fragments.FileFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -26,9 +26,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         DataType[] values = DataType.values();
 
-        if (position < values.length)
-            return new BlankFragment(values[position]);
-        return new BlankFragment(values[position % values.length], true);
+        if (position < values.length) {
+            return new FileFragment(values[position]);
+        }
+        return new FileFragment(values[position % values.length]);
     }
 
     @Nullable

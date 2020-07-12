@@ -1,4 +1,4 @@
-package com.example.safegallery.recycler_views.defaultt;
+package com.example.safegallery.recycler_views.def;
 
 import android.view.View;
 import android.widget.ImageView;
