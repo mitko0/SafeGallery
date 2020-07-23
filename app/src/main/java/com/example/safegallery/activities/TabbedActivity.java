@@ -1,9 +1,12 @@
 package com.example.safegallery.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import com.example.safegallery.Constants;
 import com.example.safegallery.R;
 import com.example.safegallery.tabs.data.DataType;
 import com.example.safegallery.tabs.data.StorageData;
+import com.example.safegallery.dialogs.PasswordDialog;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,7 @@ public class TabbedActivity extends AppCompatActivity {
         this.tabs.setupWithViewPager(this.viewPager);
 
         this.createSafeFolders();
+        this.passwordUpdate();
     }
 
     private void init() {
@@ -45,6 +49,14 @@ public class TabbedActivity extends AppCompatActivity {
             File file = new File(path);
             //noinspection ResultOfMethodCallIgnored
             file.mkdirs();
+        }
+    }
+
+    private void passwordUpdate() {
+        Intent intent = this.getIntent();
+        if (intent.getBooleanExtra(Constants.SHOW_PASSWORD_DIALOG, true)) {
+            PasswordDialog passwordDialog = new PasswordDialog();
+            passwordDialog.show(this.getSupportFragmentManager(), "password dialog");
         }
     }
 }
