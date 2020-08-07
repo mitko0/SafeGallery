@@ -42,12 +42,11 @@ public class RenameDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_dialog, null);
+        View view = inflater.inflate(R.layout.layout_rename_dialog, null);
 
-        builder
-                .setView(view)
+        builder.setView(view)
                 .setTitle("Rename item/s?")
-                .setNegativeButton("Cancel", (dialog, which) -> {})
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .setPositiveButton("Rename", (dialog, which) -> this.renameDialogListener.onRename(this.etEdit.getText().toString()));
 
         this.etEdit = view.findViewById(R.id.etEdit);

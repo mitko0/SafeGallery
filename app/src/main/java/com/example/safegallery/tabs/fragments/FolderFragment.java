@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.safegallery.R;
 import com.example.safegallery.recycler_views.interfaces.ClickListener;
-import com.example.safegallery.recycler_views.def.DefaultAdapter;
+import com.example.safegallery.tabs.data.DataPath;
 import com.example.safegallery.tabs.data.DataType;
 import com.example.safegallery.tabs.data.DataLoaderTask;
 
@@ -23,7 +23,6 @@ public class FolderFragment extends Fragment {
     private boolean safe = false;
 
     RecyclerView recyclerView;
-    DefaultAdapter recyclerViewAdapter;
 
     public FolderFragment() {}
 
@@ -81,26 +80,26 @@ public class FolderFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        this.recyclerViewAdapter = new DefaultAdapter();
+        /*this.recyclerViewAdapter = new DefaultAdapter();
         this.recyclerViewAdapter.setContext(this.getContext());
         this.recyclerViewAdapter.setClickListener(new ClickListener() {
             @Override
             public void onClick(File file, String mimeType) {}
 
             @Override
-            public void onClick(File file) {
+            public void onClick(DataPath dataPath) {
 
             }
-        });
+        });*/
 
         View view = inflater.inflate(R.layout.fragment_default, container, false);
         this.recyclerView = view.findViewById(R.id.rvDataRecyclerView);
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        this.recyclerView.setAdapter(this.recyclerViewAdapter);
+        /*this.recyclerView.setAdapter(this.recyclerViewAdapter);
 
         new DataLoaderTask<>(this.recyclerViewAdapter, this.getContext().getContentResolver(), "setDataPaths", "setViewDataPaths")
-                .execute(this.dataType);
+                .execute(this.dataType);*/
         return view;
     }
 }

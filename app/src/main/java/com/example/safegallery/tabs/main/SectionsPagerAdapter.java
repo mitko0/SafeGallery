@@ -27,9 +27,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         DataType[] values = DataType.values();
 
         if (position < values.length) {
-            return new FileFragment(values[position]);
+            return FileFragment.builder()
+                    .dataType(values[position % values.length])
+                    .build();
         }
-        return new FileFragment(values[position % values.length]);
+        return FileFragment.builder()
+                .dataType(values[position % values.length])
+                .safe(true)
+                .build();
     }
 
     @Nullable

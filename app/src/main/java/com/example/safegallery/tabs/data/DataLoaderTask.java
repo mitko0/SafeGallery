@@ -2,8 +2,6 @@ package com.example.safegallery.tabs.data;
 
 import android.content.ContentResolver;
 import android.os.AsyncTask;
-import android.os.Build;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
@@ -16,6 +14,7 @@ public class DataLoaderTask<A extends RecyclerView.Adapter<VH>, VH extends Recyc
     private final ContentResolver contentResolver;
     private final String allDataSetter;
     private final String viewDataSetter;
+    private boolean safe = false;
 
     public DataLoaderTask(A recyclerViewAdapter, ContentResolver contentResolver, String allDataSetter, String viewDataSetter) {
         this.recyclerViewAdapter = recyclerViewAdapter;
@@ -24,10 +23,23 @@ public class DataLoaderTask<A extends RecyclerView.Adapter<VH>, VH extends Recyc
         this.viewDataSetter = viewDataSetter;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public DataLoaderTask(A recyclerViewAdapter, ContentResolver contentResolver, boolean safe, String allDataSetter, String viewDataSetter) {
+        this.recyclerViewAdapter = recyclerViewAdapter;
+        this.contentResolver = contentResolver;
+        this.allDataSetter = allDataSetter;
+        this.viewDataSetter = viewDataSetter;
+        this.safe = safe;
+    }
+
     @Override
     protected List<String> doInBackground(DataType... dataTypes) {
-        List<DataPath> paths = StorageData.loadDataPathsForMedia(this.contentResolver, dataTypes[0]);
+        List<DataPath> paths;
+        if (safe) {
+            String path = StorageData.APP_SAFE_DATA_PATH + "Safe" + dataTypes[0].name();
+            paths = StorageData.loadDataPathsForPath(path);
+        }
+        else
+            paths = StorageData.loadDataPathsForMedia(this.contentResolver, dataTypes[0]);
 
         Set<String> viewData = new HashSet<>();
         for (DataPath path : paths) {
@@ -39,8 +51,7 @@ public class DataLoaderTask<A extends RecyclerView.Adapter<VH>, VH extends Recyc
         if (!this.allDataSetter.equals("")) {
             try {
                 this.recyclerViewAdapter.getClass().getMethod(this.allDataSetter, List.class).invoke(this.recyclerViewAdapter, paths);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

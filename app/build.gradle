@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.safegallery"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     //
+    implementation 'org.apache.commons:commons-lang3:3.6'
     implementation 'commons-io:commons-io:2.4'
     implementation 'com.github.whalemare:sheetmenu:1.0'
     implementation 'com.google.android.material:material:1.1.0'
