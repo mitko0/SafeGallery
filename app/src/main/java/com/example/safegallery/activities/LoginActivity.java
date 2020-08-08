@@ -4,14 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.hardware.biometrics.BiometricManager;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.CancellationSignal;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,12 +40,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (ContextCompat.checkSelfPermission(LoginActivity.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(LoginActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        }
+        Constants.revokeAppPermissions(this, 100,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.USE_BIOMETRIC);
 
         this.init();
         this.setStoredPassword();
@@ -64,12 +59,14 @@ public class LoginActivity extends AppCompatActivity {
         this.ibFingerprint = findViewById(R.id.ibFingerprint);
         this.ibHint = findViewById(R.id.ibHint);
 
+        this.loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
+                .get(LoginViewModel.class);
+
         this.biometricPrompt = new BiometricPrompt.Builder(this)
-                .setTitle("Biometric Demo")
+                .setTitle("Biometric Login")
                 .setSubtitle("Authentication is required to continue")
                 .setDescription("This app uses biometric authentication to protect your data.")
-                .setNegativeButton("Cancel", this.getMainExecutor(), (dialogInterface, i) -> {
-                })
+                .setNegativeButton("Cancel", this.getMainExecutor(), (dialogInterface, i) -> dialogInterface.dismiss())
                 .build();
 
         this.authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
@@ -79,9 +76,6 @@ public class LoginActivity extends AppCompatActivity {
                 super.onAuthenticationSucceeded(result);
             }
         };
-
-        this.loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
-                .get(LoginViewModel.class);
     }
 
     private void registerListeners() {
@@ -143,13 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "The user hasn't associated any biometric credentials with their account.", Toast.LENGTH_SHORT).show();
                     break;
             }
-        }
-
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.USE_BIOMETRIC) !=
-                PackageManager.PERMISSION_GRANTED) {
-
-            Toast.makeText(this, "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
         }
     }
 
