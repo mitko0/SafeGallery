@@ -18,28 +18,35 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.safegallery.R;
 import com.example.safegallery.recycler_views.interfaces.BottomSheetListener;
-import com.example.safegallery.recycler_views.interfaces.ClickListener;
 import com.example.safegallery.recycler_views.file.FileAdapter;
 import com.example.safegallery.tabs.data.*;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import lombok.Builder;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 
-@Builder
 public class FileFragment extends Fragment {
 
-    List<DataPath> dataPaths;
-    DataType dataType;
     boolean safe;
+    DataType dataType;
+    List<DataPath> dataPaths;
 
     Context context;
-    BottomSheetBehavior<View> bsSelectTools;
     RecyclerView recyclerView;
     FileAdapter recyclerViewAdapter;
+    BottomSheetBehavior<View> bsSelectTools;
+
+    public FileFragment() {
+        // required
+    }
+
+    public FileFragment(List<DataPath> dataPaths, boolean safe, DataType dataType) {
+        this.safe = safe;
+        this.dataType = dataType;
+        this.dataPaths = dataPaths;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -55,27 +62,13 @@ public class FileFragment extends Fragment {
         this.recyclerViewAdapter.setContext(this.getContext());
         this.recyclerViewAdapter.setDataType(this.dataType);
         this.recyclerViewAdapter.setSafe(this.safe);
-        // this.recyclerViewAdapter.setDataPaths(this.dataPaths);
+        this.recyclerViewAdapter.setDataPaths(this.dataPaths);
 
-        if (safe)
-            new DataLoaderTask<>(this.recyclerViewAdapter, this.context.getContentResolver(), true, "setDataPaths", "")
-                    .execute(this.dataType);
-        else
-            new DataLoaderTask<>(this.recyclerViewAdapter, this.context.getContentResolver(), "setDataPaths", "")
-                    .execute(this.dataType);
-
-        this.recyclerViewAdapter.setClickListener(new ClickListener() {
-            @Override
-            public void onClick(File file, String mimeType) {
-            }
-
-            @Override
-            public void onClick(DataPath dataPath) {
-                if (safe)
-                    openSafeFile(dataPath);
-                else
-                    openFile(dataPath);
-            }
+        this.recyclerViewAdapter.setClickListener(dataPath -> {
+            if (safe)
+                openSafeFile(dataPath);
+            else
+                openFile(dataPath);
         });
     }
 
@@ -94,9 +87,10 @@ public class FileFragment extends Fragment {
             view.findViewById(R.id.unlock).setVisibility(View.GONE);
 
         this.recyclerView = view.findViewById(R.id.rvDataRecyclerView);
-        this.recyclerView.setItemViewCacheSize(100);
         this.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
+
+        this.recyclerView.setItemViewCacheSize(this.dataPaths.size());
 
         this.bsSelectTools = BottomSheetBehavior.from(bsSelectToolsView);
         this.bsSelectTools.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -129,13 +123,7 @@ public class FileFragment extends Fragment {
 
     private void openFile(DataPath dataPath) {
         File file = new File(dataPath.getPath());
-        Uri uri = FileProvider.getUriForFile(this.context, this.context.getApplicationContext().getPackageName() + ".provider", file);
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, dataPath.getMimeType());
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        this.startActivity(intent);
+        this.openActivity(dataPath, file);
     }
 
     private void openSafeFile(DataPath dataPath) {
@@ -165,7 +153,11 @@ public class FileFragment extends Fragment {
             e.printStackTrace();
         }
 
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
+        this.openActivity(dataPath, file);
+    }
+
+    private void openActivity(DataPath dataPath, File file) {
+        Uri uri = FileProvider.getUriForFile(this.context, this.context.getApplicationContext().getPackageName() + ".provider", file);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, dataPath.getMimeType());

@@ -4,8 +4,17 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:foregroundGravity="center"
         tools:context=".tabs.fragments.FolderFragment"
         android:id="@+id/frame">
+
+    <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center_vertical|center_horizontal"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_gravity="bottom"

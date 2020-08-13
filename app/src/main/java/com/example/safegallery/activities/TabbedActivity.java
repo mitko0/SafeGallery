@@ -2,11 +2,14 @@ package com.example.safegallery.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import com.example.safegallery.Constants;
 import com.example.safegallery.R;
 import com.example.safegallery.tabs.data.DataType;
 import com.example.safegallery.tabs.data.StorageData;
 import com.example.safegallery.dialogs.PasswordDialog;
+import com.example.safegallery.tabs.fragments.ParentFragment;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +34,21 @@ public class TabbedActivity extends AppCompatActivity {
 
         this.createSafeFolders();
         this.passwordUpdate();
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = this.getSupportFragmentManager();
+        for (Fragment fragment : fm.getFragments()) {
+            if (fragment instanceof ParentFragment && this.viewPager.getCurrentItem() == ((ParentFragment) fragment).getPosition()) {
+                FragmentManager childFm = fragment.getChildFragmentManager();
+                if (childFm.getBackStackEntryCount() > 0) {
+                    childFm.popBackStack();
+                    return;
+                }
+            }
+        }
+        super.onBackPressed();
     }
 
     private void init() {

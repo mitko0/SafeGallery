@@ -6,14 +6,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.safegallery.tabs.data.DataType;
-import com.example.safegallery.tabs.fragments.FileFragment;
+import com.example.safegallery.tabs.fragments.ParentFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
     FragmentManager fragmentManager;
 
     public SectionsPagerAdapter(FragmentManager fm) {
@@ -25,16 +24,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         DataType[] values = DataType.values();
-
-        if (position < values.length) {
-            return FileFragment.builder()
-                    .dataType(values[position % values.length])
-                    .build();
-        }
-        return FileFragment.builder()
-                .dataType(values[position % values.length])
-                .safe(true)
-                .build();
+        return new ParentFragment(position, (position >= values.length), values[position % values.length]);
     }
 
     @Nullable

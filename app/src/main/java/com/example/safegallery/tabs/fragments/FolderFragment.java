@@ -1,78 +1,96 @@
 package com.example.safegallery.tabs.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.safegallery.R;
-import com.example.safegallery.recycler_views.interfaces.ClickListener;
+import com.example.safegallery.recycler_views.folder.FolderAdapter;
+import com.example.safegallery.recycler_views.interfaces.BottomSheetListener;
 import com.example.safegallery.tabs.data.DataPath;
 import com.example.safegallery.tabs.data.DataType;
-import com.example.safegallery.tabs.data.DataLoaderTask;
+import com.example.safegallery.tabs.viewmodels.DataViewModel;
+import com.example.safegallery.tabs.viewmodels.DataViewModelFactory;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FolderFragment extends Fragment {
 
-    private DataType dataType;
-    private boolean safe = false;
+    int position;
+    boolean safe;
+    DataType dataType;
+    DataViewModel viewModel;
 
+    Context context;
     RecyclerView recyclerView;
+    FolderAdapter recyclerViewAdapter;
+    BottomSheetBehavior<View> bsSelectTools;
+    ProgressBar progressBar;
 
-    public FolderFragment() {}
+    public FolderFragment() {
+        // required
+    }
 
-    public FolderFragment(DataType dataType) {
+    public FolderFragment(int position, boolean safe, DataType dataType) {
+        this.position = position;
+        this.safe = safe;
         this.dataType = dataType;
     }
 
-
-    // TODO: for safe data
-    public FolderFragment(DataType dataType, boolean safe) {
-        this.dataType = dataType;
-        this.safe = safe;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*this.recyclerViewAdapter = new DefaultAdapter();
+        this.recyclerViewAdapter = new FolderAdapter();
         this.recyclerViewAdapter.setContext(this.getContext());
-        this.recyclerViewAdapter.setClickListener(new ClickListener() {
-            @Override
-            public void onClick(File file, String mimeType) {}
+        this.recyclerViewAdapter.setDataType(this.dataType);
+        this.recyclerViewAdapter.setSafe(this.safe);
+        this.recyclerViewAdapter.setDataMap(new HashMap<>());
+        this.recyclerViewAdapter.setClickListener(dataPath -> {
+            Map<String, List<DataPath>> vmData = this.viewModel.getDataMap(this.position).getValue();
+            List<DataPath> data = vmData == null
+                    ? new ArrayList<>()
+                    : vmData.get(dataPath.getPath());
 
-            @Override
-            public void onClick(File file) {
-                tabFragmentListener.onNextFragment();
+            Fragment fragment = new FileFragment(data, this.safe, this.dataType);
+            this.getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHolder, fragment)
+                    .addToBackStack(fragment.toString())
+                    .commit();
+        });
 
-                *//*fragmentManager.beginTransaction()
-                        .replace(v.getId(), new FileFragment())
-                        .addToBackStack("asd")
-                        .commit();*//*
+        this.viewModel = new ViewModelProvider(this.requireActivity(), new DataViewModelFactory(this.requireActivity().getApplication())).get(DataViewModel.class);
+        this.viewModel.getDataMap(this.position).observe(requireActivity(), data -> {
+            this.recyclerViewAdapter.setDataMap(data);
+            this.recyclerViewAdapter.notifyDataSetChanged();
 
-                   *//* List<DataPath> paths = new ArrayList<>();
-                    for (String childPath : file.list()) {
-                        DataPath dataPath = new DataPath(file.getAbsolutePath() + "/" + childPath, mimeType);
-                        paths.add(dataPath);
-                    }
-                    recyclerViewAdapter.setDataPaths(paths);
-                    recyclerViewAdapter.notifyDataSetChanged();*//*
-                *//*else {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                Uri uri = FileProvider.getUriForFile(FolderFragment.this.getContext(), FolderFragment.this.getActivity().getApplicationContext().getPackageName() + ".provider", file);
-                intent.setDataAndType(uri, mimeType);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                FolderFragment.this.startActivity(intent);
-            }*//*
-            }
-        });*/
+            if (this.recyclerView != null)
+                this.recyclerView.setItemViewCacheSize(data.size());
+
+            if (this.progressBar != null)
+                this.progressBar.setVisibility(View.GONE);
+        });
     }
 
     @Override
@@ -80,26 +98,50 @@ public class FolderFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        /*this.recyclerViewAdapter = new DefaultAdapter();
-        this.recyclerViewAdapter.setContext(this.getContext());
-        this.recyclerViewAdapter.setClickListener(new ClickListener() {
-            @Override
-            public void onClick(File file, String mimeType) {}
-
-            @Override
-            public void onClick(DataPath dataPath) {
-
-            }
-        });*/
-
         View view = inflater.inflate(R.layout.fragment_default, container, false);
-        this.recyclerView = view.findViewById(R.id.rvDataRecyclerView);
-        this.recyclerView.setHasFixedSize(true);
-        this.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        /*this.recyclerView.setAdapter(this.recyclerViewAdapter);
+        LinearLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
 
-        new DataLoaderTask<>(this.recyclerViewAdapter, this.getContext().getContentResolver(), "setDataPaths", "setViewDataPaths")
-                .execute(this.dataType);*/
+        this.setChildrenClickListeners(bsSelectToolsView);
+        if (!safe)
+            view.findViewById(R.id.unlock).setVisibility(View.GONE);
+        else
+            view.findViewById(R.id.lock).setVisibility(View.GONE);
+
+        this.progressBar = view.findViewById(R.id.pbLoading);
+        Map<String, List<DataPath>> data = this.viewModel.getDataMap(this.position).getValue();
+        if (data == null || data.size() == 0)
+            this.progressBar.setVisibility(View.VISIBLE);
+
+        this.recyclerView = view.findViewById(R.id.rvDataRecyclerView);
+        this.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+        this.recyclerView.setAdapter(this.recyclerViewAdapter);
+
+        this.bsSelectTools = BottomSheetBehavior.from(bsSelectToolsView);
+        this.bsSelectTools.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        this.recyclerViewAdapter.setBsSelectTools(this.bsSelectTools);
+
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.cancelSelecting();
+    }
+
+    private void setChildrenClickListeners(LinearLayout view) {
+        for (int i = 0; i < view.getChildCount(); i++) {
+            view.getChildAt(i).setOnClickListener(v -> {
+                BottomSheetListener listener = this.recyclerViewAdapter;
+                listener.onChildClick(v.getId(), getParentFragmentManager());
+            });
+        }
+    }
+
+    private void cancelSelecting() {
+        this.recyclerViewAdapter.setSelecting(false);
+        this.recyclerViewAdapter.notifyDataSetChanged();
+        this.bsSelectTools.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 }

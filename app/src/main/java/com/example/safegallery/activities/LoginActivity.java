@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setTitle("Biometric Login")
                 .setSubtitle("Authentication is required to continue")
                 .setDescription("This app uses biometric authentication to protect your data.")
-                .setNegativeButton("Cancel", this.getMainExecutor(), (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton("Cancel", this.getMainExecutor(), (dialogInterface, i) -> {})
                 .build();
 
         this.authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
