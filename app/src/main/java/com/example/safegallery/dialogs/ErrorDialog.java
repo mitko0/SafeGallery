@@ -23,13 +23,13 @@ import java.util.Objects;
 
 public class ErrorDialog extends DialogFragment {
 
-    private final List<DataEncryptorTask.ErrorHolder> errorHolders;
+    private final List<DataEncryptorTask.DataHolder> errorHolders;
 
     Context context;
     TextView tvErrorMessage;
     ListView lvItemList;
 
-    public ErrorDialog(List<DataEncryptorTask.ErrorHolder> errorHolders) {
+    public ErrorDialog(List<DataEncryptorTask.DataHolder> errorHolders) {
         this.errorHolders = errorHolders;
     }
 
@@ -63,7 +63,7 @@ public class ErrorDialog extends DialogFragment {
 
         this.lvItemList = view.findViewById(R.id.lvItemList);
         this.lvItemList.setAdapter(arrayAdapter);
-        this.lvItemList.setOnItemClickListener((parent, view1, position, id) -> this.tvErrorMessage.setText(errorHolders.get(position).getErrorMessage()));
+        this.lvItemList.setOnItemClickListener((parent, view1, position, id) -> this.tvErrorMessage.setText(errorHolders.get(position).getValue()));
 
         if (errorHolders.size() > 5) {
             ViewGroup.LayoutParams lvParams = this.lvItemList.getLayoutParams();

@@ -15,7 +15,6 @@ import lombok.*;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @NoArgsConstructor
@@ -30,7 +29,12 @@ public class FileAdapter extends DefaultAdapter<FileViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
-        DataPath itemPath = this.dataPaths.get(position);
+        DataPath itemPath = this.dataMap.values()
+                .stream()
+                .reduce(new ArrayList<>(), (result, values) -> {
+                    result.addAll(values);
+                    return result;
+                }).get(position);
         File itemFile = new File(itemPath.getPath());
 
         holder.tvItemName.setContentDescription(itemPath.getPath());
@@ -63,7 +67,12 @@ public class FileAdapter extends DefaultAdapter<FileViewHolder> {
 
     @Override
     public int getItemCount() {
-        return this.dataPaths.size();
+        return this.dataMap.values()
+                .stream()
+                .reduce(new ArrayList<>(), (result, values) -> {
+                    result.addAll(values);
+                    return result;
+                }).size();
     }
 
     protected void handleClick(FileViewHolder holder, DataPath itemPath) {

@@ -13,6 +13,7 @@ import com.example.safegallery.dialogs.RenameDialog;
 import com.example.safegallery.dialogs.interfaces.ProgressListener;
 import com.example.safegallery.recycler_views.interfaces.BottomSheetListener;
 import com.example.safegallery.recycler_views.interfaces.ClickListener;
+import com.example.safegallery.recycler_views.interfaces.ViewModelListener;
 import com.example.safegallery.tabs.data.DataEncryptorTask;
 import com.example.safegallery.tabs.data.DataPath;
 import com.example.safegallery.tabs.data.DataType;
@@ -28,9 +29,12 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -41,12 +45,12 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
 
     protected boolean safe;
     protected DataType dataType;
-    protected List<DataPath> dataPaths = new ArrayList<>();
     protected Map<String, List<DataPath>> dataMap = new HashMap<>();
     protected List<DataPath> selectedItems;
     protected boolean selecting = false;
 
     protected ClickListener clickListener;
+    protected ViewModelListener viewModelListener;
 
     protected BottomSheetBehavior<View> bsSelectTools;
     protected Context context;
@@ -91,7 +95,7 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
         File[] children = file.listFiles();
         if (children != null) {
             for (File childFile : children) {
-                deleteFile(childFile);
+                this.deleteFile(childFile);
             }
         }
 
@@ -100,10 +104,11 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
 
             List<DataPath> values = this.dataMap.get(file.getParent());
             values.removeIf(dataPath -> dataPath.getPath().equals(file.getAbsolutePath()));
-            if (values.size() == 0)
+            if (values.size() == 0) {
                 this.dataMap.remove(file.getParent());
-            else
-                this.dataMap.put(file.getParent(), values);
+                //noinspection ConstantConditions
+                Files.delete(file.getParentFile().toPath());
+            }
         } catch (Exception e) {
             Toast.makeText(this.context, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -133,10 +138,11 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
                         currentSelectedItem.setPath(resultPath);
                     Toast.makeText(this.context, "Rename successful", Toast.LENGTH_SHORT).show();
                 }
-                cancelSelecting();
+                this.cancelSelecting();
             });
             dialog.show(fragmentManager, currentSelectedItem.getPath());
         }
+        this.cancelSelecting();
     }
 
     private String renameFile(String filePathToRename, String newName) {
@@ -148,6 +154,12 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
 
         String newPath = String.format("%s/%s%s", parentPath, newName, extension);
         File newFile = new File(newPath);
+        List<DataPath> children = this.dataMap.getOrDefault(filePathToRename, new ArrayList<>());
+        for (DataPath child : children) {
+            File file = new File(child.getPath());
+            Path path = Paths.get(newPath, file.getName());
+            child.setPath(path.toString());
+        }
 
         if (newFile.exists()) {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this.context);
@@ -203,7 +215,9 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
         items[0] = "Keep parent folder";
 
         for (int i = 0; i < children.length; i++) {
-            if (children[i].isDirectory())
+            if (children[i].isDirectory()
+                    && Objects.requireNonNull(children[i].listFiles()).length != 0)
+
                 items[i + 1] = children[i].getName();
         }
 
@@ -222,12 +236,12 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
         progressDialog.show(fragmentManager, "progress dialog");
 
         ProgressListener progressListener = new ProgressListener() {
-            List<DataEncryptorTask.ErrorHolder> errorHolders;
-            List<DataPath> successfulFiles;
+            List<DataEncryptorTask.DataHolder> errorHolders;
+            List<DataEncryptorTask.DataHolder> successfulFiles;
 
             @SuppressLint("DefaultLocale")
             @Override
-            public void onTaskFinish(List<DataPath> successfulFiles, List<DataEncryptorTask.ErrorHolder> errorHolders) {
+            public void onTaskFinish(List<DataEncryptorTask.DataHolder> successfulFiles, List<DataEncryptorTask.DataHolder> errorHolders) {
                 this.errorHolders = errorHolders;
                 this.successfulFiles = successfulFiles;
 
@@ -266,15 +280,23 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
         new DataEncryptorTask(this.safe, this.dataType, keepParentFolder, destination, progressListener).execute(dataPaths);
     }
 
-    private void updateData(List<DataPath> removeList) {
+    private void updateData(List<DataEncryptorTask.DataHolder> data) {
         List<String> keys = new ArrayList<>();
+        List<DataPath> dataPaths = data.stream().map(DataEncryptorTask.DataHolder::getDataPath).collect(Collectors.toList());
 
         this.dataMap.forEach((key, valueList) -> {
-            valueList.removeAll(removeList);
+            valueList.removeAll(dataPaths);
             if (valueList.isEmpty())
                 keys.add(key);
         });
 
-        keys.forEach(key -> this.dataMap.remove(key));
+        keys.forEach(key -> {
+            this.dataMap.remove(key);
+            File file = new File(key);
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        });
+
+        this.viewModelListener.updateData(data);
     }
 }

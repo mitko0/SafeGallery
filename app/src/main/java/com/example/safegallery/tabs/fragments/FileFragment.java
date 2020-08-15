@@ -25,13 +25,15 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FileFragment extends Fragment {
 
     boolean safe;
     DataType dataType;
-    List<DataPath> dataPaths;
+    Map<String, List<DataPath>> dataMap;
 
     Context context;
     RecyclerView recyclerView;
@@ -42,10 +44,10 @@ public class FileFragment extends Fragment {
         // required
     }
 
-    public FileFragment(List<DataPath> dataPaths, boolean safe, DataType dataType) {
+    public FileFragment(Map<String, List<DataPath>> dataMap, boolean safe, DataType dataType) {
         this.safe = safe;
         this.dataType = dataType;
-        this.dataPaths = dataPaths;
+        this.dataMap = dataMap;
     }
 
     @Override
@@ -62,7 +64,8 @@ public class FileFragment extends Fragment {
         this.recyclerViewAdapter.setContext(this.getContext());
         this.recyclerViewAdapter.setDataType(this.dataType);
         this.recyclerViewAdapter.setSafe(this.safe);
-        this.recyclerViewAdapter.setDataPaths(this.dataPaths);
+        this.recyclerViewAdapter.setDataMap(this.dataMap);
+        this.recyclerViewAdapter.setViewModelListener((ParentFragment) this.getParentFragment());
 
         this.recyclerViewAdapter.setClickListener(dataPath -> {
             if (safe)
@@ -90,7 +93,12 @@ public class FileFragment extends Fragment {
         this.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
 
-        this.recyclerView.setItemViewCacheSize(this.dataPaths.size());
+        this.recyclerView.setItemViewCacheSize(this.dataMap.values()
+                .stream()
+                .reduce(new ArrayList<>(), (result, values) -> {
+                    result.addAll(values);
+                    return result;
+                }).size());
 
         this.bsSelectTools = BottomSheetBehavior.from(bsSelectToolsView);
         this.bsSelectTools.setState(BottomSheetBehavior.STATE_HIDDEN);

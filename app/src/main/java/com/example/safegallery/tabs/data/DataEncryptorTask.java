@@ -19,8 +19,8 @@ public class DataEncryptorTask extends AsyncTask<DataPath, Integer, Void> {
     private final DataType dataType;
     private final ProgressListener progressListener;
 
-    List<DataPath> successfulFiles = new ArrayList<>();
-    List<ErrorHolder> errorMessages = new ArrayList<>();
+    List<DataHolder> successfulFiles = new ArrayList<>();
+    List<DataHolder> errorMessages = new ArrayList<>();
 
     public DataEncryptorTask(boolean safe, DataType dataType, boolean keepParentFolder, String destination, ProgressListener listener) {
         this.keepParentFolder = keepParentFolder;
@@ -45,6 +45,8 @@ public class DataEncryptorTask extends AsyncTask<DataPath, Integer, Void> {
 
             try {
                 byte[] data;
+                byte[] currentFileData = Files.readAllBytes(currentFile.toPath());
+
                 if (safe)
                     data = DataEncryptor.decrypt(Files.readAllBytes(currentFile.toPath()));
                 else
@@ -53,9 +55,10 @@ public class DataEncryptorTask extends AsyncTask<DataPath, Integer, Void> {
                 Path newPath = Files.move(currentFile.toPath(), destinationFile.toPath().resolve(currentFile.getName()), StandardCopyOption.ATOMIC_MOVE);
                 Files.write(newPath, data);
 
-                this.successfulFiles.add(paths[i]);
+                DataHolder item = new DataHolder(paths[i], newPath.toString(), currentFileData);
+                this.successfulFiles.add(item);
             } catch (Exception e) {
-                ErrorHolder errorHolder = new ErrorHolder(paths[i], e.getMessage());
+                DataHolder errorHolder = new DataHolder(paths[i], e.getMessage());
                 this.errorMessages.add(errorHolder);
                 if (isCreated)
                     //noinspection ResultOfMethodCallIgnored
@@ -103,8 +106,14 @@ public class DataEncryptorTask extends AsyncTask<DataPath, Integer, Void> {
 
     @Getter
     @AllArgsConstructor
-    public static class ErrorHolder {
+    public static class DataHolder {
         private final DataPath dataPath;
-        private final String errorMessage;
+        private final String value;
+        private byte[] data;
+
+        public DataHolder(DataPath dataPath, String value) {
+            this.dataPath = dataPath;
+            this.value = value;
+        }
     }
 }

@@ -93,9 +93,11 @@ public class StorageData {
         List<DataPath> result = new ArrayList<>();
         while (cursor.moveToNext()) {
             String mimeType = cursor.getString(mimeTypeColumnIndex);
-            if (mimeType == null)
+            String path = cursor.getString(dataColumnIndex);
+            File file = new File(path);
+            if (!file.exists() || mimeType == null)
                 continue;
-            DataPath dataPath = new DataPath(cursor.getString(dataColumnIndex), mimeType);
+            DataPath dataPath = new DataPath(path, mimeType);
             result.add(dataPath);
         }
 

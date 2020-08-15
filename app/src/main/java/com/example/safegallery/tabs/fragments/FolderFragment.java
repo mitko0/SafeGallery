@@ -66,31 +66,11 @@ public class FolderFragment extends Fragment {
         this.recyclerViewAdapter.setDataType(this.dataType);
         this.recyclerViewAdapter.setSafe(this.safe);
         this.recyclerViewAdapter.setDataMap(new HashMap<>());
-        this.recyclerViewAdapter.setClickListener(dataPath -> {
-            Map<String, List<DataPath>> vmData = this.viewModel.getDataMap(this.position).getValue();
-            List<DataPath> data = vmData == null
-                    ? new ArrayList<>()
-                    : vmData.get(dataPath.getPath());
-
-            Fragment fragment = new FileFragment(data, this.safe, this.dataType);
-            this.getParentFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.childHolder, fragment)
-                    .addToBackStack(fragment.toString())
-                    .commit();
-        });
+        this.recyclerViewAdapter.setViewModelListener((ParentFragment)this.getParentFragment());
 
         this.viewModel = new ViewModelProvider(this.requireActivity(), new DataViewModelFactory(this.requireActivity().getApplication())).get(DataViewModel.class);
-        this.viewModel.getDataMap(this.position).observe(requireActivity(), data -> {
-            this.recyclerViewAdapter.setDataMap(data);
-            this.recyclerViewAdapter.notifyDataSetChanged();
 
-            if (this.recyclerView != null)
-                this.recyclerView.setItemViewCacheSize(data.size());
-
-            if (this.progressBar != null)
-                this.progressBar.setVisibility(View.GONE);
-        });
+        this.setListeners();
     }
 
     @Override
@@ -128,6 +108,36 @@ public class FolderFragment extends Fragment {
     public void onPause() {
         super.onPause();
         this.cancelSelecting();
+    }
+
+    private void setListeners() {
+        this.recyclerViewAdapter.setClickListener(dataPath -> {
+            Map<String, List<DataPath>> vmData = this.viewModel.getDataMap(this.position).getValue();
+            List<DataPath> value = vmData == null
+                    ? new ArrayList<>()
+                    : vmData.get(dataPath.getPath());
+
+            Map<String, List<DataPath>> data = new HashMap<>();
+            data.put(dataPath.getPath(), value);
+
+            Fragment fragment = new FileFragment(data, this.safe, this.dataType);
+            this.getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHolder, fragment)
+                    .addToBackStack(fragment.toString())
+                    .commit();
+        });
+
+        this.viewModel.getDataMap(this.position).observe(requireActivity(), data -> {
+            this.recyclerViewAdapter.setDataMap(data);
+            this.recyclerViewAdapter.notifyDataSetChanged();
+
+            if (this.recyclerView != null)
+                this.recyclerView.setItemViewCacheSize(data.size());
+
+            if (this.progressBar != null)
+                this.progressBar.setVisibility(View.GONE);
+        });
     }
 
     private void setChildrenClickListeners(LinearLayout view) {
