@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import com.example.safegallery.Constants;
 import com.example.safegallery.tabs.data.DataType;
 import com.example.safegallery.tabs.fragments.ParentFragment;
 
@@ -24,7 +25,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         DataType[] values = DataType.values();
-        return new ParentFragment(position, (position >= values.length), values[position % values.length]);
+        if (position < values.length * 2)
+            return new ParentFragment(position, (position >= values.length), values[position % values.length]);
+
+        return new ParentFragment(position, false, DataType.Gallery);
     }
 
     @Nullable
@@ -32,13 +36,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         int len = DataType.values().length;
 
-        return position < len
-                ? DataType.values()[position].name()
-                : "Safe " + DataType.values()[position % len].name();
+        if (position < len * 2)
+            return position < len
+                    ? DataType.values()[position].name()
+                    : "Safe " + DataType.values()[position % len].name();
+
+        return "Intruders";
     }
 
     @Override
     public int getCount() {
-        return DataType.values().length * 2;
+        return Constants.TAB_LENGTH;
     }
 }

@@ -17,6 +17,7 @@ public class StorageData {
     public static String APP_SAFE_DATA_PATH = "/storage/emulated/0/.SafeGallery/";
     public static String APP_DATA_PATH = "/storage/emulated/0/SafeGallery/";
     public static String TMP_FOLDER = "/storage/emulated/0/.SafeGallery/Tmp/";
+    public static String INTRUDERS_FOLDER = "/storage/emulated/0/.SafeGallery/Intruders/";
     public static String TMP_FILE_NAME = "tmp.";
     public static String TMP_FILE_NAME_2 = "tmp2.";
 
@@ -26,32 +27,33 @@ public class StorageData {
 
         Cursor cursor;
         String[] projection = new String[]{MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.MIME_TYPE};
+        String sortOrder = MediaStore.MediaColumns.DATE_MODIFIED + " desc";
         Uri uri;
 
         switch (type) {
             case Audio:
                 uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                cursor = contentResolver.query(uri, projection, null, null, null);
+                cursor = contentResolver.query(uri, projection, null, null, sortOrder);
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }
                 break;
             case Gallery:
                 uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                cursor = contentResolver.query(uri, projection, null, null, null);
+                cursor = contentResolver.query(uri, projection, null, null, sortOrder);
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }
 
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                cursor = contentResolver.query(uri, projection, null, null, null);
+                cursor = contentResolver.query(uri, projection, null, null, sortOrder);
                 if (cursor != null) {
                     result.addAll(getCursorData(cursor));
                 }
                 break;
            /* case Files:
                 uri = MediaStore.Files.getContentUri("external");
-                cursor = contentResolver.query(uri, projection, null, null, null);
+                cursor = contentResolver.query(uri, projection, null, null, sortOrder);
                 if (cursor != null) {
                     result = getCursorData(cursor);
                 }
@@ -61,7 +63,7 @@ public class StorageData {
         return result;
     }
 
-    public static List<DataPath> loadDataPathsForPath(String path) {
+    public static List<DataPath> loadDataPathsForPath(String path, boolean decrypt) {
 
         List<DataPath> result = new ArrayList<>();
 
@@ -72,7 +74,9 @@ public class StorageData {
                     try {
                         String extension = FilenameUtils.getExtension(file.getAbsolutePath());
                         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                        byte[] data = DataEncryptor.decrypt(Files.readAllBytes(file.toPath()));
+                        byte[] data = null;
+                        if (decrypt)
+                            data = DataEncryptor.decrypt(Files.readAllBytes(file.toPath()));
                         DataPath dataPath = new DataPath(file.getAbsolutePath(), mimeType, data);
 
                         result.add(dataPath);
@@ -80,7 +84,7 @@ public class StorageData {
                         e.printStackTrace();
                     }
                 } else
-                    result.addAll(loadDataPathsForPath(file.getAbsolutePath()));
+                    result.addAll(loadDataPathsForPath(file.getAbsolutePath(), decrypt));
             }
         }
         return result;

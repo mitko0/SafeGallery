@@ -20,7 +20,7 @@ public class LoginDataSource {
 
     public Result login(String password) {
 
-        SharedPreferences sharedPref = this.activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.activity.getSharedPreferences(Constants.GLOBAL_SHARED_PREFS, Context.MODE_PRIVATE);
         String spPassword = sharedPref.getString(Constants.PASSWORD, Constants.DEFAULT_PASSWORD);
         if (password.equals(spPassword))
             return new Result.Success<>(password);

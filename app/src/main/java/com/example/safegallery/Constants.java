@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.example.safegallery.tabs.data.DataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ public class Constants {
     public static final String SHOW_PASSWORD_DIALOG = "show_password_dialog";
 
     public static final String PASSWORD_HINT = "password_hint";
+
+    public static final int TAB_LENGTH = DataType.values().length * 2 + 1;
 
     public static void revokeAppPermissions(Activity activity, int requestCode, @NonNull String... permissions) {
         List<String> requests = new ArrayList<>();

@@ -25,13 +25,16 @@ public class LoginViewModel extends ViewModel {
         return this.loginResult;
     }
 
-    public void login(String password) {
+    public boolean login(String password) {
         Result result = this.loginRepository.login(password);
 
-        if (result instanceof Result.Success)
+        if (result instanceof Result.Success) {
             this.loginResult.setValue(new LoginResult(R.string.login_successful));
+            return true;
+        }
         else
             this.loginResult.setValue(new LoginResult(R.string.login_failed));
+        return false;
     }
 
     public void loginDataChanged(String password) {

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.example.safegallery.Constants;
 import com.example.safegallery.tabs.data.DataLoaderTask;
 import com.example.safegallery.tabs.data.DataPath;
 import com.example.safegallery.tabs.data.DataType;
@@ -32,13 +33,13 @@ public class DataViewModel extends AndroidViewModel {
         int len = DataType.values().length;
 
         if (this.dataMaps == null) {
-            this.dataMaps = new MutableLiveData[len * 2];
-            for (int i = 0; i < len * 2; i++)
+            this.dataMaps = new MutableLiveData[Constants.TAB_LENGTH];
+            for (int i = 0; i < Constants.TAB_LENGTH; i++)
                 this.dataMaps[i] = new MutableLiveData<>();
         }
 
         if (this.dataMaps[position].getValue() == null) {
-            new DataLoaderTask(this.context.getContentResolver(), (position >= len), data -> this.dataMaps[position].postValue(data))
+            new DataLoaderTask(this.context.getContentResolver(), position, data -> this.dataMaps[position].postValue(data))
                     .execute(DataType.values()[position % len]);
         }
     }

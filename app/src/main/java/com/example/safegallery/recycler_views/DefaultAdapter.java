@@ -211,20 +211,21 @@ public abstract class DefaultAdapter<T extends RecyclerView.ViewHolder> extends 
         File file = new File(path);
         File[] children = Objects.requireNonNull(file.listFiles());
 
-        String[] items = new String[children.length + 1];
-        items[0] = "Keep parent folder";
+//        String[] items = new String[children.length + 1];
+        List<String> items = new ArrayList<>();
+        items.add("Keep parent folder");
 
-        for (int i = 0; i < children.length; i++) {
-            if (children[i].isDirectory()
-                    && Objects.requireNonNull(children[i].listFiles()).length != 0)
+        for (File child : children) {
+            if (child.isDirectory()
+                    && Objects.requireNonNull(child.listFiles()).length != 0)
 
-                items[i + 1] = children[i].getName();
+                items.add(child.getName());
         }
 
         AtomicInteger selected = new AtomicInteger();
         builder.setTitle("Select destination")
-                .setSingleChoiceItems(items, 0, (dialog, which) -> selected.set(which))
-                .setPositiveButton("Select", (dialog, which) -> this.finishEncryption(selected.get() == 0, items[selected.get()], fragmentManager))
+                .setSingleChoiceItems(items.toArray(new String[0]), 0, (dialog, which) -> selected.set(which))
+                .setPositiveButton("Select", (dialog, which) -> this.finishEncryption(selected.get() == 0, items.get(selected.get()), fragmentManager))
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
 

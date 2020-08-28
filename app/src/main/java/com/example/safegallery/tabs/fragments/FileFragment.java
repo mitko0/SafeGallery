@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -83,6 +84,10 @@ public class FileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_default, container, false);
         LinearLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
         this.setChildrenClickListeners(bsSelectToolsView);
+
+        TextView folderName = view.findViewById(R.id.title);
+        folderName.setVisibility(View.VISIBLE);
+        folderName.setText(this.dataMap.keySet().toArray()[0].toString());
 
         if (safe)
             view.findViewById(R.id.lock).setVisibility(View.GONE);

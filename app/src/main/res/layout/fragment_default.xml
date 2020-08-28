@@ -21,10 +21,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvDataRecyclerView"
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:id="@+id/title"
+                    android:visibility="gone"
+                    android:textColor="#ffffff"
+                    android:layout_margin="2dp"
+                    android:textSize="15sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDataRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"/>
+
+        </RelativeLayout>
 
         <include layout="@layout/bottom_sheet"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

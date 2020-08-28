@@ -10,21 +10,27 @@ import java.util.*;
 public class DataLoaderTask extends AsyncTask<DataType, Void, Void> {
 
     private final ContentResolver contentResolver;
-    private final boolean safe;
+    private final int position;
     private final DataSetter dataSetter;
 
-    public DataLoaderTask(ContentResolver contentResolver, boolean safe, DataSetter dataSetter) {
-        this.safe = safe;
+    public DataLoaderTask(ContentResolver contentResolver, int position, DataSetter dataSetter) {
+        this.position = position;
         this.dataSetter = dataSetter;
         this.contentResolver = contentResolver;
     }
 
     @Override
     protected Void doInBackground(DataType... dataTypes) {
+        int len = DataType.values().length;
         List<DataPath> paths;
-        if (safe) {
+
+        if (position >= len * 2) {
+            String path = StorageData.INTRUDERS_FOLDER;
+            paths = StorageData.loadDataPathsForPath(path, false);
+        }
+        else if (position >= len) {
             String path = StorageData.APP_SAFE_DATA_PATH + "Safe" + dataTypes[0].name();
-            paths = StorageData.loadDataPathsForPath(path);
+            paths = StorageData.loadDataPathsForPath(path, true);
         } else
             paths = StorageData.loadDataPathsForMedia(this.contentResolver, dataTypes[0]);
 
