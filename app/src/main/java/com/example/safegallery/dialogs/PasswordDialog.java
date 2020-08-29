@@ -67,7 +67,7 @@ public class PasswordDialog extends DialogFragment {
     }
 
     private void init(View view) {
-        this.etPassword = view.findViewById(R.id.etPassword);
+        this.etPassword = view.findViewById(R.id.tlPassword);
         this.etHint = view.findViewById(R.id.etHint);
 
         this.globalSharedPreferences = this.context.getSharedPreferences(Constants.GLOBAL_SHARED_PREFS, Context.MODE_PRIVATE);

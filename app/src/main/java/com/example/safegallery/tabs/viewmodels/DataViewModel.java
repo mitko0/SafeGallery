@@ -2,6 +2,7 @@ package com.example.safegallery.tabs.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -41,6 +42,25 @@ public class DataViewModel extends AndroidViewModel {
         if (this.dataMaps[position].getValue() == null) {
             new DataLoaderTask(this.context.getContentResolver(), position, data -> this.dataMaps[position].postValue(data))
                     .execute(DataType.values()[position % len]);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadAllData() {
+        int len = DataType.values().length;
+
+        if (this.dataMaps == null) {
+            this.dataMaps = new MutableLiveData[Constants.TAB_LENGTH];
+            for (int i = 0; i < Constants.TAB_LENGTH; i++)
+                this.dataMaps[i] = new MutableLiveData<>();
+        }
+
+        for (int i = 0; i < Constants.TAB_LENGTH; i++) {
+            int position = i;
+            if (this.dataMaps[position].getValue() == null) {
+                new DataLoaderTask(this.context.getContentResolver(), position, data -> this.dataMaps[position].postValue(data))
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, DataType.values()[position % len]);
+            }
         }
     }
 }

@@ -47,7 +47,7 @@ public class FileAdapter extends DefaultAdapter<FileViewHolder> {
 
         String mimeType = itemPath.getMimeType();
         if (mimeType.contains("audio"))
-            Glide.with(context).load(R.drawable.ic_music).into(holder.ivItemImage);
+            Glide.with(context).load(R.drawable.music).into(holder.ivItemImage);
         else if (mimeType.contains("file"))
             Glide.with(context).load(R.drawable.ic_pdf).into(holder.ivItemImage);
         else if (mimeType.contains("image") || mimeType.contains("video")) {

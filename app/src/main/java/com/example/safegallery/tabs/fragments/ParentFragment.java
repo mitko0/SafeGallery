@@ -55,7 +55,8 @@ public class ParentFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         this.viewModel = new ViewModelProvider(this.requireActivity(), new DataViewModelFactory(this.requireActivity().getApplication())).get(DataViewModel.class);
-        this.viewModel.loadData(this.position);
+        // this.viewModel.loadData(this.position);
+        this.viewModel.loadAllData();
 
         Fragment fragment = new FolderFragment(this.position, this.safe, this.dataType);
         this.getChildFragmentManager()

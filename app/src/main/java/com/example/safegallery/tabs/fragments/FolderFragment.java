@@ -89,7 +89,7 @@ public class FolderFragment extends Fragment {
 
         this.progressBar = view.findViewById(R.id.pbLoading);
         Map<String, List<DataPath>> data = this.viewModel.getDataMap(this.position).getValue();
-        if (data == null || data.size() == 0)
+        if (data == null)
             this.progressBar.setVisibility(View.VISIBLE);
 
         this.recyclerView = view.findViewById(R.id.rvDataRecyclerView);

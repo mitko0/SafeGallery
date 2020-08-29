@@ -12,7 +12,7 @@
             android:id="@+id/ivItemImage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/ic_folder_open_black"
+            android:src="@drawable/folder"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1"
             tools:ignore="MissingConstraints"

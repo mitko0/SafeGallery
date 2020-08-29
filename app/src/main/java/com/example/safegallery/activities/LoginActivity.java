@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.biometrics.BiometricManager;
 import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.camera2.*;
@@ -21,6 +22,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
@@ -31,6 +34,8 @@ import com.example.safegallery.login.ui.LoginViewModel;
 import com.example.safegallery.login.ui.LoginViewModelFactory;
 import com.example.safegallery.tabs.data.StorageData;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,10 +69,10 @@ public class LoginActivity extends AppCompatActivity {
     HandlerThread mBackgroundThread;
 
     SharedPreferences globalSharedPreferences;
-    EditText etPassword;
+    TextInputLayout tlPassword;
+    TextInputEditText etPassword;
     ProgressBar loadingProgressBar;
     ImageButton ibFingerprint;
-    ImageButton ibHint;
 
     private LoginViewModel loginViewModel;
     private BiometricPrompt biometricPrompt;
@@ -106,6 +111,10 @@ public class LoginActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA,
                 Manifest.permission.USE_BIOMETRIC);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setBackgroundDrawable(getDrawable(R.drawable.app_bar));
 
         this.init();
         this.setStoredPassword();
@@ -150,10 +159,10 @@ public class LoginActivity extends AppCompatActivity {
 
         this.globalSharedPreferences = this.getSharedPreferences(Constants.GLOBAL_SHARED_PREFS, MODE_PRIVATE);
 
+        this.tlPassword = findViewById(R.id.tlPassword);
         this.etPassword = findViewById(R.id.etPassword);
         this.loadingProgressBar = findViewById(R.id.loading);
         this.ibFingerprint = findViewById(R.id.ibFingerprint);
-        this.ibHint = findViewById(R.id.ibHint);
 
         this.loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
                 .get(LoginViewModel.class);
@@ -257,7 +266,7 @@ public class LoginActivity extends AppCompatActivity {
 
         this.ibFingerprint.setOnClickListener(v -> this.biometricPrompt.authenticate(new CancellationSignal(), this.getMainExecutor(), this.authenticationCallback));
 
-        this.ibHint.setOnClickListener(v -> {
+        this.tlPassword.setStartIconOnClickListener(v -> {
             String msg = this.globalSharedPreferences.getString(Constants.PASSWORD_HINT, "Initial password is 0000\n(Fingerprint unlock is an option as well)");
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
