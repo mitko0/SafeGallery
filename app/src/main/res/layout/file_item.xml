@@ -5,8 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
->
+        android:padding="5dp">
 
     <ImageView
             android:id="@+id/ivItemImage"
@@ -17,7 +16,8 @@
             tools:ignore="MissingConstraints"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/todo"/>
 
     <ImageView
             android:layout_width="wrap_content"
@@ -26,7 +26,8 @@
             android:id="@+id/ivVideoIcon"
             android:background="#FFFFFF"
             app:layout_constraintTop_toTopOf="@+id/ivItemImage"
-            app:layout_constraintStart_toStartOf="@+id/ivItemImage"/>
+            app:layout_constraintStart_toStartOf="@+id/ivItemImage"
+            android:contentDescription="@string/todo"/>
 
     <CheckBox
             android:id="@+id/cbSelect"
@@ -39,7 +40,7 @@
             android:id="@+id/tvItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textAlignment="center"
             android:singleLine="true"
             android:ellipsize="middle"

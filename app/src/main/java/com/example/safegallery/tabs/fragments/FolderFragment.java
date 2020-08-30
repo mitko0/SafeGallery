@@ -2,7 +2,7 @@ package com.example.safegallery.tabs.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -79,7 +79,7 @@ public class FolderFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_default, container, false);
-        LinearLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
+        GridLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
 
         this.setChildrenClickListeners(bsSelectToolsView);
         if (!safe)
@@ -140,7 +140,7 @@ public class FolderFragment extends Fragment {
         });
     }
 
-    private void setChildrenClickListeners(LinearLayout view) {
+    private void setChildrenClickListeners(GridLayout view) {
         for (int i = 0; i < view.getChildCount(); i++) {
             view.getChildAt(i).setOnClickListener(v -> {
                 BottomSheetListener listener = this.recyclerViewAdapter;

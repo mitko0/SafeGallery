@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
-import android.graphics.drawable.GradientDrawable;
 import android.hardware.biometrics.BiometricManager;
 import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.camera2.*;
@@ -114,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setBackgroundDrawable(getDrawable(R.drawable.app_bar));
+            actionBar.setBackgroundDrawable(getDrawable(R.drawable.gradient));
 
         this.init();
         this.setStoredPassword();
@@ -125,11 +124,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         this.startBackgroundThread();
-        try {
-            this.openCamera();
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+            try {
+                this.openCamera();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         super.onResume();
     }
 
@@ -146,6 +146,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                    this.finish();
+                else if (Manifest.permission.CAMERA.equals(permissions[i])) {
+                    try {
+                        this.openCamera();
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             for (int grantResult : grantResults) {
                 if (grantResult == PackageManager.PERMISSION_DENIED)
                     this.finish();

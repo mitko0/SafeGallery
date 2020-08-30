@@ -4,10 +4,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/refreshData"
+            android:id="@+id/finish"
             app:showAsAction="ifRoom"
-            android:icon="@drawable/ic_refresh"
-            android:title="@string/refresh_data"/>
+            android:icon="@drawable/ic_finish"
+            android:title="@string/finish"/>
 
     <item
             android:id="@+id/changePassword"

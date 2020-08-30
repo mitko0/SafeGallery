@@ -20,7 +20,7 @@
     </ListView>
 
     <TextView
-            android:text="Error message:"
+            android:text="@string/error_message"
             android:id="@+id/tvTextView"
             android:textSize="20sp"
             android:textColor="#000000"

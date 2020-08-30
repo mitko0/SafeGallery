@@ -16,12 +16,14 @@ import com.example.safegallery.tabs.data.DataType;
 import com.example.safegallery.tabs.data.StorageData;
 import com.example.safegallery.dialogs.PasswordDialog;
 import com.example.safegallery.tabs.fragments.ParentFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.safegallery.tabs.main.SectionsPagerAdapter;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TabbedActivity extends AppCompatActivity {
 
@@ -73,19 +75,38 @@ public class TabbedActivity extends AppCompatActivity {
                 PasswordDialog passwordDialog = new PasswordDialog();
                 passwordDialog.show(this.getSupportFragmentManager(), "password dialog");
                 return true;
-            case R.id.refreshData:
-                /*FragmentManager fm = this.getSupportFragmentManager();
-                for (Fragment fragment : fm.getFragments()) {
-                    if (fragment instanceof ParentFragment && this.viewPager.getCurrentItem() == ((ParentFragment) fragment).getPosition()) {
-                        FragmentManager childFm = fragment.getChildFragmentManager();
-                        if (childFm.getBackStackEntryCount() > 0) {
-                            childFm.popBackStack();
-                            return;
-                        }
-                    }
-                }*/
-            default:
-                Toast.makeText(this, ":D", Toast.LENGTH_SHORT).show();
+            case R.id.finish:
+                String[] items = new String[] {"5, Fail", "6, OK", "7, Not bad", "8, Good", "9, Even better", "10, Error 404, reaction not found"};
+                AtomicInteger selectedItem = new AtomicInteger();
+
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+                builder.setTitle("Did i pass?")
+                        .setSingleChoiceItems(items, -1, (dialog, which) -> selectedItem.set(which + 5))
+                        .setPositiveButton("Confirm", (dialog, which) -> {
+                            switch (selectedItem.get()) {
+                                case 5:
+                                    Toast.makeText(this, ":(", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 6:
+                                    Toast.makeText(this, ":/", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 7:
+                                    Toast.makeText(this, ":)", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 8:
+                                    Toast.makeText(this, ":D", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 9:
+                                    Toast.makeText(this, "^^", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 10:
+                                    Toast.makeText(this, "!!!!", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

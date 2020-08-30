@@ -18,7 +18,8 @@
             tools:ignore="MissingConstraints"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/todo"/>
 
     <CheckBox
             android:id="@+id/cbSelect"
@@ -31,7 +32,7 @@
             android:id="@+id/tvItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textAlignment="center"
             android:singleLine="true"
             android:ellipsize="middle"

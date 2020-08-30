@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.LinearLayout;
+import android.widget.GridLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -82,7 +82,7 @@ public class FileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_default, container, false);
-        LinearLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
+        GridLayout bsSelectToolsView = view.findViewById(R.id.bottom_sheet);
         this.setChildrenClickListeners(bsSelectToolsView);
 
         TextView folderName = view.findViewById(R.id.title);
@@ -119,7 +119,7 @@ public class FileFragment extends Fragment {
         this.cancelSelecting();
     }
 
-    private void setChildrenClickListeners(LinearLayout view) {
+    private void setChildrenClickListeners(GridLayout view) {
         for (int i = 0; i < view.getChildCount(); i++) {
             view.getChildAt(i).setOnClickListener(v -> {
                 BottomSheetListener listener = this.recyclerViewAdapter;

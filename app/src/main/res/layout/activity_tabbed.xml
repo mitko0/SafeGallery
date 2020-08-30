@@ -16,7 +16,7 @@
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 app:title="@string/app_name"
-                android:background="@drawable/app_bar"
+                android:background="@drawable/gradient"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -24,7 +24,7 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/app_bar"/>
+                android:background="@drawable/gradient"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
